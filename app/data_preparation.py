@@ -24,7 +24,8 @@ def transform_data(df):
         df[col] = le.fit_transform(df[col])
     
     # Perform feature engineering as needed
-    # (Add your feature engineering code here)
+    # Example: Create a new feature by combining existing features
+    df['total_sales'] = df['quantity'] * df['price']
     
     return df
 
