@@ -1,3 +1,9 @@
 {
-  "welcome": "Hoş geldiniz"
+  "welcome": "Hoş geldiniz",
+  "navigation": {
+    "inventory": "Stok",
+    "sales": "Satışlar",
+    "prediction": "Tahmin",
+    "analytics": "Analiz"
+  }
 }

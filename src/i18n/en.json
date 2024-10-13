@@ -1,3 +1,35 @@
 {
-  "welcome": "Welcome"
+  "welcome": "Welcome",
+  "navigation": {
+    "inventory": "Inventory",
+    "sales": "Sales",
+    "prediction": "Prediction",
+    "analytics": "Analytics"
+  },
+  "sales": {
+    "title": "Sales",
+    "addSale": "Add Sale",
+    "productName": "Product Name",
+    "saleQuantity": "Sale Quantity",
+    "saleDate": "Sale Date",
+    "add": "Add"
+  },
+  "prediction": {
+    "title": "Prediction",
+    "date": "Date",
+    "predict": "Predict",
+    "predictedSales": "Predicted Sales"
+  },
+  "analytics": {
+    "salesChart": "Sales Chart",
+    "inventoryChart": "Inventory Chart",
+    "sales": "Sales",
+    "inventory": "Inventory"
+  },
+  "inventory": {
+    "addItem": "Add Item",
+    "itemName": "Item Name",
+    "itemQuantity": "Item Quantity",
+    "add": "Add"
+  }
 }
