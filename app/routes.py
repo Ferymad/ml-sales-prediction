@@ -1,32 +1,48 @@
-# Define API routes
-from flask import request, jsonify
-from . import create_app
-from .models import db, Product, Sale
-import joblib
-import pandas as pd
+from flask import Flask, request, jsonify, Blueprint
+from flask_cors import CORS  # Import CORS
+from .models import Sale  # Corrected import to reference the models module in the same package
+from app import db  # Assuming you have initialized SQLAlchemy
+from datetime import datetime  # Import datetime for date conversion
 
-app = create_app()
+api = Blueprint('api', __name__)
 
-# Load the trained model
-model = joblib.load('backend/app/ml/model.pkl')
+# Enable CORS for the API
+CORS(api)  # Apply CORS to the API blueprint
 
-@app.route('/api/products', methods=['GET'])
-def get_products():
-    products = Product.query.all()
-    return jsonify([product.name for product in products])
-
-@app.route('/api/sales', methods=['POST'])
+# Existing POST method for adding a sale
+@api.route('/api/sales', methods=['POST'])
 def add_sale():
-    data = request.json
-    new_sale = Sale(product_id=data['product_id'], date=data['date'], quantity=data['quantity'])
+    data = request.get_json()
+    date_str = data.get('date')
+    product_id = data.get('product_id')
+    quantity = data.get('quantity')
+    end_date_str = data.get('end_date')  # Get end_date from request
+
+    # Convert date string to a date object
+    date = datetime.strptime(date_str, '%Y-%m-%d').date()
+    end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date() if end_date_str else None  # Convert if provided
+
+    new_sale = Sale(date=date, product_id=product_id, quantity=quantity, end_date=end_date)
     db.session.add(new_sale)
     db.session.commit()
-    return jsonify({'message': 'Sale added successfully'})
+    return jsonify({'message': 'Sale added successfully'}), 201
 
-@app.route('/api/predict', methods=['POST'])
-def predict_sales():
-    data = request.json
-    # Assuming the input data is in the correct format expected by the model
-    input_data = pd.DataFrame(data, index=[0])
-    prediction = model.predict(input_data)
-    return jsonify({'predicted_sales': prediction[0]})
+# New GET method for fetching sales data
+@api.route('/api/sales', methods=['GET'])
+def get_sales():
+    sales = Sale.query.all()
+    sales_list = [
+        {
+            'id': sale.id,
+            'date': sale.date.strftime('%Y-%m-%d'),
+            'product_id': sale.product_id,
+            'quantity': sale.quantity,
+            'end_date': sale.end_date.strftime('%Y-%m-%d') if sale.end_date else None,  # Include end_date
+        }
+        for sale in sales
+    ]
+    return jsonify(sales_list), 200
+
+# Function to initialize routes
+def init_routes(app):
+    app.register_blueprint(api)
